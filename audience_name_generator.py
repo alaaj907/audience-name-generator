@@ -2,17 +2,17 @@ import streamlit as st
 import pandas as pd
 
 # Initialize a pandas DataFrame to hold the data
-columns = ["EPC/GWI", "Research", "Date", "Version/Revision", "Target Type", "Target Data Source", "Audience Name"]
+columns = ["System Source", "Audience", "Target Type", "Data Source", "Purpose", "Create Date", "Audience Name"]
 data = pd.DataFrame(columns=columns)
 
 # Function to generate the audience name
-def generate_audience_name(epc_gwi, research, date, version, target_type, target_data_source):
+def generate_audience_name(system_source, audience, target_type, data_source, purpose, create_date):
     # Generate the audience name
-    audience_name = f"{epc_gwi}_{research}_{date}_{target_type}_{target_data_source}_{version}"
+    audience_name = f"{system_source}_{audience}_{target_type}_{data_source}_{purpose}_{create_date}"
 
     # Add the input and generated audience name to the dataframe
     global data
-    new_row = pd.DataFrame([[epc_gwi, research, date, version, target_type, target_data_source, audience_name]],
+    new_row = pd.DataFrame([[system_source, audience, target_type, data_source, purpose, create_date, audience_name]],
                            columns=columns)
     data = pd.concat([data, new_row], ignore_index=True)
 
@@ -22,17 +22,17 @@ def generate_audience_name(epc_gwi, research, date, version, target_type, target
 st.title('Audience Name Generator')
 
 # Input form
-epc_gwi = st.text_input('EPC/GWI:')
-research = st.text_input('Research:')
-date = st.text_input('Date:')
-version = st.text_input('Version/Revision:')
-target_type = st.selectbox('Target Type', ['Behavioral', 'Contextual', 'Demographic', 'Geographic'])
-target_data_source = st.text_input('Target Data Source:')
+system_source = st.selectbox('System Source', ['EPC', 'GWI'])  # Dropdown for System Source (EPC, GWI)
+audience = st.text_input('Audience')  # Text input for short, descriptive name of the audience
+target_type = st.selectbox('Target Type', ['BEH', 'CON', 'DEM', 'GEO'])  # Dropdown for Target Type (BEH, CON, DEM, GEO)
+data_source = st.selectbox('Data Source', ['1P', '1P3P', '2P', '3P', 'NA'])  # Dropdown for Data Source (1P, 1P3P, 2P, 3P, NA)
+purpose = st.selectbox('Purpose', ['ACT', 'RND', 'TST'])  # Dropdown for Purpose (ACT, RND, TST)
+create_date = st.text_input('Create Date')  # Text input for sequential number indicating audience version (e.g., V1, V2)
 
 # Button to generate the audience name
 if st.button('Generate Audience Name'):
-    if epc_gwi and research and date and version and target_type and target_data_source:
-        audience_name = generate_audience_name(epc_gwi, research, date, version, target_type, target_data_source)
+    if system_source and audience and target_type and data_source and purpose and create_date:
+        audience_name = generate_audience_name(system_source, audience, target_type, data_source, purpose, create_date)
         st.success(f'Generated Audience Name: {audience_name}')
     else:
         st.error("Please fill in all fields.")
